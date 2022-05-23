@@ -1,0 +1,22 @@
+{
+  "name": "library",
+  "version": "1.0.0",
+  "description": "Node Backend Assignment",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Cyber-Boy/Library.git"
+  },
+  "author": "Ash",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Cyber-Boy/Library/issues"
+  },
+  "homepage": "https://github.com/Cyber-Boy/Library#readme",
+  "dependencies": {
+    "express": "^4.18.1"
+  }
+}
