@@ -23,7 +23,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 //ENVs setting the port
-const PORT = process.env.PORT || 8080;
+const PORT = process.env.PORT || 8000;
 app.listen(PORT, () => {
   console.log(`Server started at ${PORT}`);
 });
@@ -53,23 +53,30 @@ app.post("/register", function (req, res) {
   let username = req.body.uname;
   let password = req.body.password;
   var crypto = hashPassword(password);
-  db.query("select * from users where uname = " + db.escape(name) + ";",
-    (error,result,field){
-        if (result[0]=== undefined){
-            if (name && (password === passwordC)){
-                db.query("INSERT INTO USER VALUES(" + db.escape(name) + ", " + salt + ", " + hash+");");
-                //res.render(`somefile`, {data:some var in this block or function lmao})
-            }
-            else if (password !== passwordC) {
-                res.send("Passwords didn't match");
-            }
-            else {
-                res.send("password must not be emply");
-            }
+  db.query(
+    "select * from users where uname = " + db.escape(name) + ";",
+    (error, result, field) => {
+      if (result[0] === undefined) {
+        if (name && password === passwordC) {
+          db.query(
+            "INSERT INTO USER VALUES(" +
+              db.escape(name) +
+              ", " +
+              salt +
+              ", " +
+              hash +
+              ");"
+          );
+          //res.render(`somefile`, {data:some var in this block or function lmao})
+        } else if (password !== passwordC) {
+          res.send("Passwords didn't match");
+        } else {
+          res.send("password must not be emply");
         }
-        else {
-            console.log(result);
-            res.send("Username is not unique");
-        }
-    });
+      } else {
+        console.log(result);
+        res.send("Username is not unique");
+      }
+    }
+  );
 });
