@@ -1,3 +1,4 @@
+const crypto = require("crypto");
 const express = require("express");
 const db = require("./database");
 db.connect();
@@ -50,22 +51,18 @@ app.get("/dashboard", function (req, res) {
 
 app.post("/register", function (req, res) {
   let name = req.body.name;
-  let username = req.body.uname;
+  let username = req.body.username;
   let password = req.body.password;
-  var crypto = hashPassword(password);
+  let passwordC = req.body.confirmPassword;
+  var pass = hashPassword(password);
   db.query(
-    "select * from users where uname = " + db.escape(name) + ";",
+    "select * from users where NAME = " + db.escape(name) + ";",
     (error, result, field) => {
-      if (result[0] === undefined) {
-        if (name && password === passwordC) {
+    console.log(result)
+      if (result === undefined) {
+        if (name && (password === passwordC)) {
           db.query(
-            "INSERT INTO USER VALUES(" +
-              db.escape(name) +
-              ", " +
-              salt +
-              ", " +
-              hash +
-              ");"
+            `INSERT INTO USERS VALUES(${db.escape(name)},'${pass.salt}', '${pass.hash}');`
           );
           //res.render(`somefile`, {data:some var in this block or function lmao})
         } else if (password !== passwordC) {
@@ -74,6 +71,7 @@ app.post("/register", function (req, res) {
           res.send("password must not be emply");
         }
       } else {
+        console.log("LMAO GG")
         console.log(result);
         res.send("Username is not unique");
       }
