@@ -28,3 +28,9 @@ body,nav{
     background-color: #00700f;
     color: #FFFFFF;
 }
+
+.form-container{
+    display: flex;
+    background-color: aqua;
+    align-items: center;
+}

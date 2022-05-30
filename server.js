@@ -188,6 +188,26 @@ app.get("/book/:bookID",validateCookies, function (req,res) {
   )
 });
 
+app.get("/myBooks", validateCookies, function (req,res){
+  let userID = req.userID;
+  let books = [];
+  db.query(
+    `SELECT * FROM BOOKS WHERE USERID=${db.escape(userID)};`,
+    (err,result,field)=>{
+      if (err){
+        throw err;
+      }
+      else{
+        result.forEach((book)=>{
+          //console.log(book.BOOKID);
+          books.push({NAME: book.NAME, AUTHOR: book.AUTHOR, STATUS: book.STATUS, BOOKID: book.BOOKID});
+        });
+        res.render("browse",{books});
+      }
+    }
+  )
+});
+
 app.get("/book/:bookID/:userID", validateCookies, function (req,res){
   let bookID = req.params.bookID;
   let userID = req.params.userID;

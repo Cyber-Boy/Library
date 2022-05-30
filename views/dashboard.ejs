@@ -1,15 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <%- include('./partials/head.ejs'); %>
 </head>
 <body>
-    <a href="/list">List</a>
-    <a href="/requests">Requests</a>
-    <a href="/add">Add</a>
-    <a href="/remove">Remove</a>
+    <div class="text-center font-weight-normal" style="max-width: 480px;margin:auto;">
+        <a href="/list"><button class="btn btn-primary btn-block btn-lg mt-2">List</button></a>
+        <a href="/add"><button class="btn btn-primary btn-block btn-lg mt-2">Add</button></a>
+    </div>  
 </body>
 </html>

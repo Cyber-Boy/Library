@@ -7,11 +7,11 @@
     <header>
         <%- include('./partials/header.ejs'); %>
     </header>
-    <div class="main">
-        <form method="POST" action="/add">
-            <input type="text" name="bname" placeholder="Book Name">
-            <input type="text" name="author" placeholder="Author">
-            <input type="submit" value="Add">
+    <div class="main text-center">
+        <form method="POST" action="/add" style="max-width: 480px;margin:auto;">
+            <input type="text" name="bname" class="form-control mt-2" placeholder="Book Name">
+            <input type="text" name="author" class="form-control mt-2" placeholder="Author">
+            <input type="submit" value="Add" class="btn btn-lg btn-primary btn-block">
         </form>
     </div>
     <footer>

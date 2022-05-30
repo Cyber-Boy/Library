@@ -7,13 +7,16 @@
     <header>
         <%- include('./partials/header.ejs'); %>
     </header>
-    <div class="form-container">
-        <form action="/login" method="POST">
-            <input type="text" name="username" placeholder="3nt3r Us3rn4m3">
-            <input type="password" name="password" placeholder="password">
-            <input type="submit" value="login">
+    <div class="text-center mt-5">
+        <form action="/login" method="POST" style="max-width: 480px;margin:auto;">
+            <h1 class="h3 mb-3 font-weight-normal">Login</h1>
+            <input type="text" name="username" class="form-control mt-2" placeholder="3nt3r Us3rn4m3" required autofocus>
+            <input type="password" name="password" class="form-control pd-2" placeholder="password" required autofocus>
+            <div class="mt-3">
+                <input type="submit" value="Login" class="btn btn-lg btn-primary btn-block">
+            </div>
         </form>
-        <span>Do not have an ID? Create one <a href="/register">here</a></span>
+        <span class="font-weight-normal">Do not have an ID? Create one <a href="/register">here</a></span>
     </div>
     <footer>
         <%- include('./partials/footer.ejs'); %>

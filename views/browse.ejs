@@ -7,22 +7,35 @@
     <header>
         <%- include('./partials/header.ejs'); %>
     </header>
-    <form action="browse" method="POST">
-        <input type="text" name="name" placeholder="Name">
-        <input type="text" name="author" placeholder="Author">
-        <input type="submit" value="search">
-    </form>
-    <div class="results">
-        <% books.forEach(function(book) { %>
-            <div class="result" href=<%= "book/" + book.BOOKID %>>
-                <ul>
-                    <li><%= book.NAME %></li>
-                    <li><%= book.AUTHOR %></li>
-                    <li><%= book.STATUS %></li>
-                </ul>
-                <a href=<%= "book/" + book.BOOKID %>>More Info</a>
-            </div>
-        <% }); %>
+    <div class="text-center mt-5">
+        <form action="browse" method="POST" style="max-width: 480px;margin:auto;">
+            <h1 class="h3 mb-3 font-weight-normal">Browse Books</h1>
+            <input type="text" name="name" placeholder="Name" class="form-control">
+            <input type="text" name="author" placeholder="Author" class="form-control">
+            <input type="submit" value="Search" class="btn btn-primary btn-block btn-lg">
+        </form>
+    </div>
+    <div class="results text-center">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th scope="col">Book Name</th>
+                    <th scope="col">Author</th>
+                    <th scope="col">Availability</th>
+                    <th scope="col">Get info</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% books.forEach(function(book) { %>
+                    <tr>
+                        <th scope="row"><%= book.NAME %></th>
+                        <td><%= book.AUTHOR %></td>
+                        <td><%= book.STATUS %></td>
+                        <td><a href=<%= "book/" + book.BOOKID %>>More Info</a></td>
+                    </tr>
+                <% }); %>
+            </tbody>
+        </table>
     </div>
     <footer>
         <%- include('./partials/footer.ejs'); %>

@@ -2,34 +2,53 @@
 <html lang="en">
 <head>
     <%- include('./partials/head.ejs'); %>
+    <style>
+        li{
+            display: inline;
+        }
+    </style>
 </head>
 <body>
     <header>
         <%- include('./partials/header.ejs'); %>
     </header>
     <div class="results">
-        <% books.forEach(function(book) { %>
-            <div class="item">
-                <ul>
-                    <li><%= book.BOOKID %></li>
-                    <li><%= book.NAME %></li>
-                    <li><%= book.AUTHOR %></li>
-                    <li><%= book.STATUS %></li>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th scope="col">Book ID</th>
+                    <th scope="col">Book Name</th>
+                    <th scope="col">Author</th>
+                    <th scope="col">Status</th>
+                    <th scope="col">UserID</th>
+                    <th scope="col">Response</th>
+                    <th scope="col"></th>
+                    <th scope="col">More info</th>
+                </tr>
+            </thead>
+            <% books.forEach(function(book) { %>
+                <tr>
+                    <th><%= book.BOOKID %></th>
+                    <td><%= book.NAME %></td>
+                    <td><%= book.AUTHOR %></td>
+                    <td><%= book.STATUS %></td>
                     <% if (book.STATUS === 'WAITING') { %>
-                        <li><%= book.USERID %></li>
-                        <a href=<%= "/approve/" + book.BOOKID %>><button>Approve</button></a>
-                        <a href=<%= "/reject/" + book.BOOKID %>><button>Reject</button></a>
+                        <td><%= book.USERID %></td>
+                        <td><a href=<%= "/approve/" + book.BOOKID %>><button class="btn btn-primary btn-block btn-lg mt-2">Approve</button></a></td>  
+                        <td><a href=<%= "/reject/" + book.BOOKID %>><button class="btn btn-primary btn-block btn-lg mt-2">Reject</button></a></td>
                     <% } else if (book.STATUS === 'INUSE') { %>
-                        <li><%= book.USERID %></li>
-                        <li><%= book.TIMESTAMP %></li> <!--Feature to be added-->
-                        <li><%= book.FINE %></li>
+                        <td><%= book.USERID %></td>
+                        <td><%= book.TIMESTAMP %></td> <!--Feature to be added-->
+                        <td><%= book.FINE %></td>
                     <% } else{%>
-                        <a href=<%= "/remove/" + book.BOOKID %>><button>Remove from library</button></a>
+                        <td></td>
+                        <td><a href=<%= "/remove/" + book.BOOKID %>><button class="btn">Remove from library</button></a></td>
+                        <td></td>
                     <% } %>
-                </ul>
-                <a href=<%= "book/" + book.BOOKID %>>More Info</a>
-            </div>
-        <% }); %>
+                    <td><a href=<%= "book/" + book.BOOKID %>><button class="btn">More Info</button></a></td>
+                </tr>
+            <% }); %>
+        </table>
         <footer>
             <%- include('./partials/footer.ejs'); %>
         </footer>

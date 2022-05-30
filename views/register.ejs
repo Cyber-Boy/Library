@@ -1,22 +1,26 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <%- include('./partials/head.ejs'); %>
 </head>
 <body>
-    <div class="form-container">
-        <form action="register" method="POST">
-            <input type="text" name="username" placeholder="Username">
-            <input type="text" name="name" placeholder="Name">
-            <input type="text" name="eno" placeholder="Enrollment Number">
-            <input type="password" name="password" placeholder="Password">
-            <input type="password" name="confirmPassword" placeholder="Confirm Password">
-            <input type="submit" value="register">
+    <header>
+        <%- include('./partials/header.ejs'); %>
+    </header>
+    <div class="text-center mt-5 font-weight-normal">
+        <form action="register" method="POST" style="max-width: 480px;margin:auto;">
+            <h1 class="h3 mb-3 font-weight-normal">Register</h1>
+            <input type="text" name="username" placeholder="Username" class="form-control">
+            <input type="text" name="name" placeholder="Name" class="form-control">
+            <input type="text" name="eno" placeholder="Enrollment Number" class="form-control">
+            <input type="password" name="password" placeholder="Password" class="form-control">
+            <input type="password" name="confirmPassword" placeholder="Confirm Password" class="form-control">
+            <input type="submit" value="Register" class="btn btn-lg btn-primary btn-block">
         </form>
         <span>Already have an ID? Login <a href="/register">here</a></span>
     </div>
+    <footer>
+        <%- include('./partials/footer.ejs'); %>
+    </footer>
 </body>
 </html>
