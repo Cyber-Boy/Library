@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <%- include('./partials/head.ejs'); %>
+</head>
+<body>
+    <header>
+        <%- include('./partials/header.ejs'); %>
+    </header>
+    <div class="results">
+        <% books.forEach(function(book) { %>
+            <div class="item">
+                <ul>
+                    <li><%= book.BOOKID %></li>
+                    <li><%= book.NAME %></li>
+                    <li><%= book.AUTHOR %></li>
+                    <li><%= book.STATUS %></li>
+                    <% if (book.STATUS === 'WAITING') { %>
+                        <li><%= book.USERID %></li>
+                        <a href=<%= "/approve/" + book.BOOKID %>><button>Approve</button></a>
+                        <a href=<%= "/reject/" + book.BOOKID %>><button>Reject</button></a>
+                    <% } else if (book.STATUS === 'INUSE') { %>
+                        <li><%= book.USERID %></li>
+                        <li><%= book.TIMESTAMP %></li> <!--Feature to be added-->
+                        <li><%= book.FINE %></li>
+                    <% } else{%>
+                        <a href=<%= "/remove/" + book.BOOKID %>><button>Remove from library</button></a>
+                    <% } %>
+                </ul>
+                <a href=<%= "book/" + book.BOOKID %>>More Info</a>
+            </div>
+        <% }); %>
+        <footer>
+            <%- include('./partials/footer.ejs'); %>
+        </footer>
+    </div>
+</body>
+</html>
