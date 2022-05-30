@@ -1,7 +1,6 @@
 const crypto = require("crypto");
 const express = require("express");
 const db = require("./database");
-const sessionManager = require("./session-manager");
 db.connect();
 const app = express();
 app.set("view engine", "ejs");
@@ -309,6 +308,21 @@ app.get("/dashboard", validateCookies, isAdmin, (req,res)=>{
   res.render("dashboard");
 });
 
+app.get("/signout", validateCookies, (req,res) =>{
+  req.headers.cookie = null
+  db.query(
+    `DELETE FROM COOKIES WHERE USERID=${db.escape(req.userID)};`,
+    (err,result,field) => {
+      if (err){
+        throw err
+      }
+      else {
+        res.send("User Signed out successfully!")
+      }
+    }
+  )
+});
+
 
 //Creating Middleware
 function validateCookies(req,res,next) {
@@ -329,7 +343,7 @@ function validateCookies(req,res,next) {
           //console.log(`${cookie}`);
           //console.log(result)
           //console.log(`${result[0].SESSIONID}`)
-          req.userID = result[0].USERID;
+          console.log(result[0])
           if (result[0].ADMIN === 1){
             req.adminAuth = 1;
           }
@@ -337,6 +351,7 @@ function validateCookies(req,res,next) {
             req.adminAuth = 0;
           }
           if (cookie===result[0].SESSIONID){
+            req.userID = result[0].USERID;
             next();
           }
           else{

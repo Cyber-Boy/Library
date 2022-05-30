@@ -2,10 +2,24 @@
 <html lang="en">
 <head>
     <%- include('./partials/head.ejs'); %>
+    <style>
+        li{
+            display: inline;
+        }
+    </style>
 </head>
 <body>
     <header>
-        <%- include('./partials/header.ejs'); %>
+        <nav>
+            <ul class="navbar">
+                <li class="nav-item">
+                    <a class="nav-link" href="/">Home</a>
+                </li>
+                <li>
+                  <a href="/signout"><button>Signout</button></a>
+                </li>
+              </ul>
+          </nav>
     </header>
     <div class="text-center mt-5">
         <form action="browse" method="POST" style="max-width: 480px;margin:auto;">
