@@ -26,9 +26,13 @@ app.use(express.static(__dirname + '/public'));
 
 //ENVs setting the port
 const PORT = process.env.PORT || 8000;
-app.listen(PORT, () => {
-  console.log(`Server started at ${PORT}`);
-  console.log(__dirname)
+app.listen(PORT,"0.0.0.0", (err,ADDRESS) => {
+  if (err){
+    throw err;
+  }
+  else{
+    console.log(`Server started at ${ADDRESS}:${PORT}`);
+  }
 });
 
 //Setting view engine to ejs
