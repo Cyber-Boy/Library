@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <%- include('./partials/head.ejs'); %>
+    <style>
+        li{
+            display: inline;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <%- include('./partials/header.ejs'); %>
+    </header>
+    <div class="results">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th scope="col">User ID</th>
+                    <th scope="col">Name</th>
+                    <th scope="col">Enrollment Number</th>
+                    <th scope="col">Book ID</th>
+                </tr>
+            </thead>
+            <% users.forEach(function(user) { %>
+                <tr>
+                    <th><%= user.USERID %></th>
+                    <td><%= user.NAME %></td>
+                    <td><%= user.ENO %></td>
+                    <td><%= user.BOOKID %></td>
+                </tr>
+            <% }); %>
+        </table>
+        <footer>
+            <%- include('./partials/footer.ejs'); %>
+        </footer>
+    </div>
+</body>
+</html>

@@ -35,15 +35,15 @@ app.listen(PORT, () => {
 app.set("view engine", "ejs");
 
 //routes
-app.get("/", function (req, res) {
+app.get("/", (req, res)=> {
   res.render("index");
 });
 
-app.get("/login", function (req, res) {
+app.get("/login", (req, res)=> {
   res.render("login");
 });
 
-app.post("/login", function (req,res){
+app.post("/login", (req,res)=>{
   let username = req.body.username;
   let password = req.body.password;
   db.query(
@@ -91,11 +91,11 @@ app.post("/login", function (req,res){
   )
 });
 
-app.get("/register", function (req, res) {
+app.get("/register", (req, res)=> {
   res.render("register");
 });
 
-app.post("/register", function (req, res) {
+app.post("/register", (req, res)=> {
   let name = req.body.name;
   let username = req.body.username;
   let password = req.body.password;
@@ -112,7 +112,7 @@ app.post("/register", function (req, res) {
         if (result[0] === undefined) {
           if (name && (password === passwordC)) {
             db.query(
-              `INSERT INTO USERS (USERNAME, NAME, ENO, SALT, HASH, ADMIN, CHECKIN) VALUES(${db.escape(username)},${db.escape(name)},${db.escape(eno)},'${pass.salt}', '${pass.hash}', 0, 0);`
+              `INSERT INTO USERS (USERNAME, NAME, ENO, SALT, HASH, ADMIN) VALUES(${db.escape(username)},${db.escape(name)},${db.escape(eno)},'${pass.salt}', '${pass.hash}', 0);`
             );
             res.render("success");
           } else if (password !== passwordC) {
@@ -128,10 +128,10 @@ app.post("/register", function (req, res) {
   );
 });
 
-app.get("/browse", validateCookies, function (req,res) {
+app.get("/browse", validateCookies, (req,res)=> {
   let books = [];
   db.query(
-    `SELECT NAME, AUTHOR, STATUS, BOOKID FROM BOOKS`,
+    `SELECT NAME, AUTHOR, STATUS, BOOKID, QUANTITY FROM BOOKS`,
     (err,result,field) => {
       if (err){
         throw err
@@ -140,7 +140,7 @@ app.get("/browse", validateCookies, function (req,res) {
         //console.log(result);
         result.forEach((book)=>{
           //console.log(book.BOOKID);
-          books.push({NAME: book.NAME, AUTHOR: book.AUTHOR, STATUS: book.STATUS, BOOKID: book.BOOKID});
+          books.push({NAME: book.NAME, AUTHOR: book.AUTHOR, STATUS: book.STATUS, BOOKID: book.BOOKID, QUANTITY: book.QUANTITY});
         });
         //console.log(books[0].BOOKID)
         res.render("browse",{books})
@@ -149,7 +149,7 @@ app.get("/browse", validateCookies, function (req,res) {
   );
 });
 
-app.post("/browse", validateCookies, function (req,res) {
+app.post("/browse", validateCookies, (req,res)=> {
   let name = req.body.name;
   let author = req.body.author;
   let books = [];
@@ -169,7 +169,7 @@ app.post("/browse", validateCookies, function (req,res) {
   )
 });
 
-app.get("/book/:bookID",validateCookies, function (req,res) {
+app.get("/book/:bookID",validateCookies, (req,res)=> {
   let bookID = req.params.bookID;
   db.query(
     `SELECT * FROM BOOKS WHERE BOOKID=${db.escape(bookID)};`,
@@ -179,19 +179,29 @@ app.get("/book/:bookID",validateCookies, function (req,res) {
       }
       else{
         //console.log(result);
-        let book = {NAME: result[0].NAME, AUTHOR: result[0].AUTHOR, STATUS: result[0].STATUS, ID: result[0].BOOKID, USERID: result[0].USERID};
-        let user = {USERID: req.userID}
-        res.render("book", {book, user});  
+        let book = {NAME: result[0].NAME, AUTHOR: result[0].AUTHOR, STATUS: result[0].STATUS, ID: result[0].BOOKID, USERID: result[0].USERID, QUANTITY: result[0].QUANTITY};
+        db.query(
+          `SELECT BOOKID FROM USERS WHERE ID=${db.escape(req.userID)};`,
+          (err1,result1,field1)=>{
+            if (err1){
+              throw err1;
+            }
+            else{
+              let user = {USERID: req.userID, BOOKID: result1[0].BOOKID}
+              res.render("book", {book, user});  
+            }
+          }
+        )
       }
     } 
   )
 });
 
-app.get("/myBooks", validateCookies, function (req,res){
+app.get("/myBooks", validateCookies, (req,res)=>{
   let userID = req.userID;
   let books = [];
   db.query(
-    `SELECT * FROM BOOKS WHERE USERID=${db.escape(userID)};`,
+    `select USERS.BOOKID , BOOKS.NAME, BOOKS.AUTHOR, BOOKS.QUANTITY FROM BOOKS INNER JOIN USERS ON BOOKS.BOOKID = USERS.BOOKID WHERE USERS.ID = ${db.escape(userID)};`,
     (err,result,field)=>{
       if (err){
         throw err;
@@ -199,7 +209,7 @@ app.get("/myBooks", validateCookies, function (req,res){
       else{
         result.forEach((book)=>{
           //console.log(book.BOOKID);
-          books.push({NAME: book.NAME, AUTHOR: book.AUTHOR, STATUS: book.STATUS, BOOKID: book.BOOKID});
+          books.push({NAME: book.NAME, AUTHOR: book.AUTHOR, BOOKID: book.BOOKID, QUANTITY: book.QUANTITY});
         });
         res.render("browse",{books});
       }
@@ -207,32 +217,38 @@ app.get("/myBooks", validateCookies, function (req,res){
   )
 });
 
-app.get("/book/:bookID/:userID", validateCookies, function (req,res){
+app.get("/book/:bookID/:userID", validateCookies, (req,res)=>{
   let bookID = req.params.bookID;
   let userID = req.params.userID;
   db.query(
-    `UPDATE BOOKS SET USERID = ${db.escape(userID)}, STATUS='WAITING' WHERE BOOKID = ${db.escape(bookID)};`,
+    `UPDATE USERS SET BOOKID = ${db.escape(bookID)} WHERE ID = ${db.escape(userID)};`,
     (err, result, field) =>{
       if (err){
         throw err;
       }
       else{
+        db.query(
+          `UPDATE BOOKS SET STATUS='WAITING' WHERE BOOKID=${db.escape(bookID)};`
+        )
         res.redirect("/browse");
       }
     }
   );
 });
 
-app.get("/book/:bookID/:userID/return", validateCookies, function (req,res){
+app.get("/book/:bookID/:userID/return", validateCookies, (req,res) =>{
   let bookID = req.params.bookID;
   let userID = req.params.userID;
   db.query(
-    `UPDATE BOOKS SET USERID = ${db.escape(userID)}, STATUS='AVAILABLE' WHERE BOOKID= ${db.escape(bookID)};`,
+    `UPDATE USERS SET BOOKID = NULL WHERE ID= ${userID};`,
     (err,result, field) => {
       if (err){
         throw err;
       }
       else{
+        db.query(
+          `UPDATE BOOKS SET QUANTITY=QUANTITY+1 WHERE BOOKID=${bookID};`
+        )
         res.redirect("/browse");
       }
     }
@@ -246,8 +262,9 @@ app.get("/add",validateCookies, isAdmin, (req,res)=>{
 app.post("/add", validateCookies, isAdmin,(req,res)=>{
   let bname = req.body.bname;
   let author = req.body.author;
+  let quantity = req.body.quantity;
   db.query(
-    `INSERT INTO BOOKS (NAME, AUTHOR, STATUS) VALUES(${db.escape(bname)}, ${db.escape(author)}, 'AVAILABLE');`,
+    `INSERT INTO BOOKS (NAME, AUTHOR, STATUS,QUANTITY) VALUES(${db.escape(bname)}, ${db.escape(author)}, 'AVAILABLE', ${db.escape(quantity)});`,
     (err,result,field) => {
       res.send("New Book Added!")
     }
@@ -276,7 +293,7 @@ app.get("/list",validateCookies, isAdmin, (req, res) => {
       else{
         result.forEach((book)=>{
           //console.log(book.BOOKID);
-          books.push({NAME: book.NAME, AUTHOR: book.AUTHOR, STATUS: book.STATUS, BOOKID: book.BOOKID, USERID: book.USERID});
+          books.push({NAME: book.NAME, AUTHOR: book.AUTHOR, STATUS: book.STATUS, BOOKID: book.BOOKID});
         });
         res.render("list", {books})
       }
@@ -284,12 +301,46 @@ app.get("/list",validateCookies, isAdmin, (req, res) => {
   )
 });
 
+app.get("/listIssues", validateCookies, isAdmin, (req, res) =>{
+  let users = [];
+  db.query(
+  `SELECT * FROM USERS WHERE BOOKID!=NULL;`,
+  (err, result, field)=>{
+    if (err){
+      throw err;
+    }
+    else{
+      result.forEach((user)=>{
+        users.push({NAME: user.NAME, ENO: user.ENO, USERID: user.ID, BOOKID: user.BOOKID});
+      });
+      res.render("listIssues",{users})
+    }
+  })
+});
+
 app.get("/approve/:bookID", validateCookies, isAdmin, (req,res) => {
   let bookID = req.params.bookID;
+  console.log("Running approve function")
   db.query(
-    `UPDATE BOOKS SET STATUS="INUSE" WHERE BOOKID=${db.escape(bookID)};`,
+    `UPDATE BOOKS SET QUANTITY=QUANTITY-1 WHERE BOOKID=${db.escape(bookID)};`,
     (err,result,field) => {
+      if (err){
+        throw err;
+      }
+      else{
+      db.query(
+        `SELECT QUANTITY FROM BOOKS WHERE BOOKID=${db.escape(bookID)};`,
+        (err,result,field) =>{
+          if (result[0].QUANTITY === 0){
+            db.query(`UPDATE BOOKS SET STATUS="UNAVAILABLE" WHERE BOOKID=${db.escape(bookID)};`);
+          }
+          else{
+            db.query(`UPDATE BOOKS SET STATUS="AVAILABLE" WHERE BOOKID=${db.escape(bookID)};`)
+          }
+        }
+      );
       res.redirect("/list");
+      }
     }
   );
 });
@@ -343,7 +394,7 @@ function validateCookies(req,res,next) {
           //console.log(`${cookie}`);
           //console.log(result)
           //console.log(`${result[0].SESSIONID}`)
-          console.log(result[0])
+         0// console.log(result[0])
           if (result[0].ADMIN === 1){
             req.adminAuth = 1;
           }
