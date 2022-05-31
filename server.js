@@ -251,12 +251,20 @@ app.get("/book/:bookID/:userID/return", validateCookies, (req,res) =>{
       }
       else{
         db.query(
-          `UPDATE BOOKS SET QUANTITY=QUANTITY+1 WHERE BOOKID=${bookID};`
+          `UPDATE BOOKS SET STATUS="RETURN" WHERE BOOKID=${bookID};`
+          //`UPDATE BOOKS SET QUANTITY=QUANTITY+1 WHERE BOOKID=${bookID};`
         )
         res.redirect("/browse");
       }
     }
   )
+});
+
+app.get("/approve/return/:bookID",validateCookies, (req,res)=>{
+  db.query(
+    `UPDATE BOOKS SET STATUS="AVAILABLE", QUANTITY=QUANTITY+1 WHERE BOOKID=${req.params.bookID};`,
+  )
+  res.redirect("/list");
 });
 
 app.get("/add",validateCookies, isAdmin, (req,res)=>{

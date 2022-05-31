@@ -35,6 +35,10 @@
                         <td><%= book.USERID %></td>
                         <td><a href=<%= "/approve/" + book.BOOKID %>><button class="btn btn-primary btn-block btn-lg mt-2">Approve</button></a></td>  
                         <td><a href=<%= "/reject/" + book.BOOKID %>><button class="btn btn-primary btn-block btn-lg mt-2">Reject</button></a></td>
+                    <% } else if (book.STATUS === 'RETURN') { %>
+                        <td></td>
+                        <td><a href=<%= "/approve/return/" + book.BOOKID %>><button class="btn btn-primary btn-block btn-lg mt-2">Approve</button></a></td>  
+                        <td><a href=<%= "/reject/" + book.BOOKID %>><button class="btn btn-primary btn-block btn-lg mt-2">Reject</button></a></td>
                     <% } else if (book.STATUS === 'UNAVAILABLE') { %>
                         <td></td>
                         <td>BOOK UNAVAILABLE</td>
